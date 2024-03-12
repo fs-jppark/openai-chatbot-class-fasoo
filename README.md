@@ -32,7 +32,15 @@ git clone 명령을 사용해 클론을 받습니다.
 `git chekcout -b {브랜치명}`  
 **해당 주차 폴더에 들어가 자신의 이름으로 폴더를 만들고 과제를 수행한 파일을 이름 폴더에 저장 후 main 브렌치로 PR 을 주면 됩니다**
 
-6. 제가 Merge 를 하거나 메인이 되는 저장소에 변경사항이 있게되면 아래 명령으로 pull 또는 fetch 를 받은 후 자기 브랜치 머지하시면 됩니다.
+6. 제가 Merge 를 하거나 메인이 되는 저장소에 변경사항이 있게되면 아래 방법으로 Merge 하시면 됩니다.  
+* merge 할 브랜치로 이동 합니다. 보통 main 이므로 `git switch main` 으로 브랜치를 이동한 후 아래 명령으로 머지를 바로 진행합니다.  
+`git merge upstream/main`  
+* upsteram 브랜치의 내용을 pull 또는 fetch 받은 후 직접 merge 하셔도 됩니다. 아래 레퍼런스를 참고하거나 인터넷에서 검색하시면 됩니다. 
+
+
+
+명령으로 pull 또는 fetch 를 받은 후 자기 브랜치 머지하시면 됩니다.
+
 
 ## Git 관련 레퍼런스
 https://wonit.tistory.com/368  
