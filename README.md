@@ -35,10 +35,10 @@ git clone 명령을 사용해 클론을 받습니다.
 6. 제가 Merge 를 하거나 메인이 되는 저장소에 변경사항이 있게되면 아래 명령으로 pull 또는 fetch 를 받은 후 자기 브랜치 머지하시면 됩니다.
 
 ## Git 관련 레퍼런스
-https://wonit.tistory.com/368
-https://wonit.tistory.com/368
-https://pers0n4.io/github-remote-repository-and-upstream/
-https://docs.github.com/ko/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork
+https://wonit.tistory.com/368  
+https://wonit.tistory.com/368  
+https://pers0n4.io/github-remote-repository-and-upstream/  
+https://docs.github.com/ko/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-repository-for-a-fork  
 
 
    
