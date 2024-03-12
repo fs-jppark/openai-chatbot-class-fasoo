@@ -20,19 +20,17 @@ Week06
 
 3. 자기 계정으로 Repository 가 포크 된것을 볼 수 있습니다.
 ![](https://private-user-images.githubusercontent.com/1491606/311959342-676520b6-8964-46eb-a4a3-022b4f9645ed.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTAyMjM1NDksIm5iZiI6MTcxMDIyMzI0OSwicGF0aCI6Ii8xNDkxNjA2LzMxMTk1OTM0Mi02NzY1MjBiNi04OTY0LTQ2ZWItYTRhMy0wMjJiNGY5NjQ1ZWQucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MDMxMiUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDAzMTJUMDYwMDQ5WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9NTQ0NmEzZGJmM2QxYTgwNjNjY2ViODU5YTk2NGFkMmE4N2Y4NDc2YTU0MmRjODk1NTNhMDA5MzBkNzQwYjcwNSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmYWN0b3JfaWQ9MCZrZXlfaWQ9MCZyZXBvX2lkPTAifQ.vcHz2xZ2m3vMNDvCC3A1zKdTOhNmidt_XvJyAbyNXZA)
-여기서 포크된 자시의 레포지터리 주소를 복사하고 클론 받습니다.
-git clone 명령을 사용해 클론을 받습니다.
-`git clone https://github.com/{자기계정이름}/openai-chatbot-class-fasoo.git`
+여기서 포크된 자시의 레포지터리 주소를 복사하고 클론 받습니다.  
+git clone 명령을 사용해 클론을 받습니다.  
+`git clone https://github.com/{자기계정이름}/openai-chatbot-class-fasoo.git`  
 
-4. 그리고 아래 명령으로 제 계정을 연결해줘야 제가 변경한 것을 pull 또는 fetch 할 수 있습니다.
-보통 upstream 이라는 이름으로 추가를 합니다.
-`git remote add upstream https://github.com/fs-jppark/openai-chatbot-class-fasoo.git`
+4. 그리고 아래 명령으로 제 계정을 연결해줘야 제가 변경한 것을 pull 또는 fetch 할 수 있습니다.  
+보통 upstream 이라는 이름으로 추가를 합니다.  
+`git remote add upstream https://github.com/fs-jppark/openai-chatbot-class-fasoo.git`  
 
-5. 아래 명령으로 브랜치를 만드시고, 작업을 하신뒤 Pull Request 를 주시면 됩니다.
-
-`git chekcout -b {브랜치명}`
-
-*해당 주차 폴더에 들어가 자신의 이름으로 폴더를 만들고 과제를 수행한 파일을 이름 폴더에 저장 후 main 브렌치로 PR 을 주면 됩니다*
+5. 아래 명령으로 브랜치를 만드시고, 작업을 하신뒤 Pull Request 를 주시면 됩니다.  
+`git chekcout -b {브랜치명}`  
+**해당 주차 폴더에 들어가 자신의 이름으로 폴더를 만들고 과제를 수행한 파일을 이름 폴더에 저장 후 main 브렌치로 PR 을 주면 됩니다**
 
 6. 제가 Merge 를 하거나 메인이 되는 저장소에 변경사항이 있게되면 아래 명령으로 pull 또는 fetch 를 받은 후 자기 브랜치 머지하시면 됩니다.
 
