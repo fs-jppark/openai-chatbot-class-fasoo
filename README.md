@@ -32,7 +32,21 @@ git clone 명령을 사용해 클론을 받습니다.
 `git chekcout -b {브랜치명}`  
 **해당 주차 폴더에 들어가 자신의 이름으로 폴더를 만들고 과제를 수행한 파일을 이름 폴더에 저장 후 main 브렌치로 PR 을 주면 됩니다**
 
-6. 제가 Merge 를 하거나 메인이 되는 저장소에 변경사항이 있게되면 아래 명령으로 pull 또는 fetch 를 받은 후 자기 브랜치 머지하시면 됩니다.
+6. 커밋(commit)을 하고, 최종적으로 자신의 브랜치에 푸시(push) 한 후 PR 은 github 사이트에서 자신의 Repository 들어 간 후 아래 화면에서 주시면 됩니다.
+![](https://private-user-images.githubusercontent.com/1491606/311992337-351b3297-af70-47bb-b29f-af243da9d4f5.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTAyMzE0NTksIm5iZiI6MTcxMDIzMTE1OSwicGF0aCI6Ii8xNDkxNjA2LzMxMTk5MjMzNy0zNTFiMzI5Ny1hZjcwLTQ3YmItYjI5Zi1hZjI0M2RhOWQ0ZjUucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MDMxMiUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDAzMTJUMDgxMjM5WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9NmQzMDY3Y2U0NDNkMDljZWViOTRlN2JjZTNhOGQzMDM5Yzk4NDhkOTcwODlmZDBjZmEyM2U2NjZkYTliMjc1OCZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmYWN0b3JfaWQ9MCZrZXlfaWQ9MCZyZXBvX2lkPTAifQ.B2n_jbsAQZEqvc8UGejCbkAiekZuFsY80d9gzGFuCkw)
+
+
+![](https://private-user-images.githubusercontent.com/1491606/311992598-c9519d1e-cf92-4aab-9ca0-104e5eb91972.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTAyMzE0NTksIm5iZiI6MTcxMDIzMTE1OSwicGF0aCI6Ii8xNDkxNjA2LzMxMTk5MjU5OC1jOTUxOWQxZS1jZjkyLTRhYWItOWNhMC0xMDRlNWViOTE5NzIucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MDMxMiUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDAzMTJUMDgxMjM5WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9ZTYyMGUxY2NjMWE4MjcwOGQ0ODZmMTYyYWE5YTkzZmFkYjgzOTM4NjdmNGFkYTY3Zjk0ZmVhNjNkZWYyYmQzZiZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmYWN0b3JfaWQ9MCZrZXlfaWQ9MCZyZXBvX2lkPTAifQ.Y5cWuytTi9WC6E7MLS4NFrzwX0oFmmUE8tqymzZLqik)
+
+7. 제가 Merge 를 하거나 메인이 되는 저장소에 변경사항이 있게되면 아래 방법으로 Merge 하시면 됩니다.  
+* merge 할 브랜치로 이동 합니다. 보통 main 이므로 `git switch main` 으로 브랜치를 이동한 후 아래 명령으로 머지를 바로 진행합니다.  
+`git merge upstream/main`  
+* upsteram 브랜치의 내용을 pull 또는 fetch 받은 후 직접 merge 하셔도 됩니다. 아래 레퍼런스를 참고하거나 인터넷에서 검색하시면 됩니다. 
+
+
+
+명령으로 pull 또는 fetch 를 받은 후 자기 브랜치 머지하시면 됩니다.
+
 
 ## Git 관련 레퍼런스
 https://wonit.tistory.com/368  
