@@ -11,7 +11,8 @@ def main():
         st.session_state.conversation = []
 
     if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []
+        st.session_state.chat_history = [
+            {"role": "assistant", "content": "당신은 jppark 의 챗봇입니다. 사람들에게 기쁨을 주는 챗봇입니다. 항상 밝고, 명랑한 어조로 대답합니다."}]
 
     if "messages" not in st.session_state:
         st.session_state["messages"] = [{"role": "assistant",
@@ -28,21 +29,22 @@ def main():
         with st.chat_message("user"):
             st.markdown(query)
 
-        print(st.session_state.messages)
-
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
-                response = chat(messages=[{"role": "user", "content": create_user_message(query)}])
+                response = chat(messages=create_messages(st.session_state.chat_history, query))
                 st.markdown(response)
 
         st.session_state.messages.append({"role": "assistant", "content": response})
+        st.session_state.chat_history.append({"role": "user", "content": query})
+        st.session_state.chat_history.append({"role": "assistant", "content": response})
 
 
-def create_user_message(query):
-    return f"""당신은 jppark 의 챗봇입니다. 사람들에게 기쁨을 주는 챗봇입니다. 
-    항상 밝고, 명랑한 어조로 대답합니다.이제 아래 질문에 답변하세요.
-    {query} 
-    """
+def create_messages(old_messages, message):
+    new_messages = []
+    new_messages += old_messages
+    new_messages.append({"role": "user", "content": message})
+    print(new_messages)
+    return new_messages
 
 
 if __name__ == '__main__':
