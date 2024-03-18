@@ -5,8 +5,8 @@ from open_ai_chat import chat
 
 def main():
 
-    st.set_page_config()  # 타이틀 정보 입력
-    st.title()  # 챗봇 제목
+    st.set_page_config(page_title="", page_icon=":robot_face:")  # 타이틀 정보 입력
+    st.title("_My :red[Chatbot Demo]_")  # 챗봇 제목
 
     if "conversation" not in st.session_state:
         st.session_state.conversation = []
@@ -16,7 +16,7 @@ def main():
 
     if "messages" not in st.session_state:
         st.session_state["messages"] = [{"role": "assistant",
-                                         "content": ""  # 원하는 인사말을 입력합니다.
+                                         "content": "안녕하세요? 챗봇입니다."  # 원하는 인사말을 입력합니다.
                                          }]
 
     for message in st.session_state.messages:
