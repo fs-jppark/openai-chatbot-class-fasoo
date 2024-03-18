@@ -4,7 +4,6 @@ from open_ai_chat import chat
 
 
 def main():
-
     st.set_page_config(page_title="", page_icon=":robot_face:")  # 타이틀 정보 입력
     st.title("_My :red[Chatbot Demo]_")  # 챗봇 제목
 
@@ -29,12 +28,21 @@ def main():
         with st.chat_message("user"):
             st.markdown(query)
 
+        print(st.session_state.messages)
+
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
-                response = chat(messages=[{"role":"user", "content": query}])
+                response = chat(messages=[{"role": "user", "content": create_user_message(query)}])
                 st.markdown(response)
 
         st.session_state.messages.append({"role": "assistant", "content": response})
+
+
+def create_user_message(query):
+    return f"""당신은 jppark 의 챗봇입니다. 사람들에게 기쁨을 주는 챗봇입니다. 
+    항상 밝고, 명랑한 어조로 대답합니다.이제 아래 질문에 답변하세요.
+    {query} 
+    """
 
 
 if __name__ == '__main__':
