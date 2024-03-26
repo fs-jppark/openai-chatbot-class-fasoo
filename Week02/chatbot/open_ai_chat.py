@@ -16,4 +16,10 @@ def chat(
         top_p=1,
         model="gpt-3.5-turbo-1106",
 ):
-    pass
+    response = client.chat.completions.create(
+        model=model,
+        messages=messages,
+        temperature=temperature,
+        top_p=top_p)
+    
+    return response.choices.pop().message
