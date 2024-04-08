@@ -1,4 +1,9 @@
 import streamlit as st
+from dotenv import load_dotenv
+
+load_dotenv(
+    dotenv_path="./env/.env",  # .env 경로를 절대 경로 또는 상대경로로 입력합니다.
+    verbose=True)
 
 from open_ai_chat import chat
 
