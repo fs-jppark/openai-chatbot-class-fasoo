@@ -122,17 +122,25 @@ def main():
 
     #     st.session_state.messages.append({"role": "assistant", "content": response})
 
-    #FixedChunk()
+    print("Step1 > FixedChunk > ")
+
+    FixedChunk()
 
     print("------------------------------------")
+
+    print("Step2 > SplitByTokens > ")
 
     SplitByTokens()
 
     print("------------------------------------")
 
+    print("Step3 > RecursiveChunking > ")
+
     RecursiveChunking()
 
     print("------------------------------------")
+
+    print("Step4 >SemanticChunking > ")
 
     SemanticChunking()
 
