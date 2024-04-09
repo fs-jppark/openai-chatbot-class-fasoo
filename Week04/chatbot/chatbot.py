@@ -56,5 +56,9 @@ def create_messages(old_messages, message):
     return new_messages
 
 
+def tiktoken_len(text):
+    tokenizer = tiktoken.get_encoding("cl100k_base")
+    tokens = tokenizer.encode(text)
+    return len(tokens)
 if __name__ == '__main__':
     main()
