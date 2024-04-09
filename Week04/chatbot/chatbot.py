@@ -1,18 +1,24 @@
 import streamlit as st
 import tiktoken
 from dotenv import load_dotenv
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 from doc_loader import get_text
 
 load_dotenv(
     dotenv_path="./env/.env",  # .env 경로를 절대 경로 또는 상대경로로 입력합니다.
     verbose=True)
 
+from embed_store import EmbeddingStore
 from open_ai_chat import chat
 
 
 def main():
     st.set_page_config(page_title="", page_icon=":robot_face:")  # 타이틀 정보 입력
     st.title("_My :red[Chatbot Demo]_")  # 챗봇 제목
+
+    embed_store = EmbeddingStore()
 
     with st.sidebar:
         uploaded_files = st.file_uploader("Upload your file", type=['pdf', 'docx'], accept_multiple_files=True)
@@ -54,7 +60,11 @@ def main():
 
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
-                response = chat(messages=create_messages(st.session_state.chat_history, query))
+                if search_knowledge_base is True:
+                    query_docs = embed_store.query_embedding(text=query)
+                    response = chat(messages=create_messages(st.session_state.chat_history, get_prompt_refer_doc(query_docs, query)))
+                else:
+                    response = chat(messages=create_messages(st.session_state.chat_history, query))
                 st.markdown(response)
 
         st.session_state.messages.append({"role": "assistant", "content": response})
