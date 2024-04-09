@@ -1,4 +1,5 @@
 import streamlit as st
+import tiktoken
 from dotenv import load_dotenv
 
 load_dotenv(

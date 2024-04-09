@@ -5,3 +5,4 @@ chromadb~=0.4.24
 loguru~=0.7.2
 langchain~=0.1.14
 pypdf
+tiktoken~=0.5.2
