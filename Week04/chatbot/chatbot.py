@@ -1,6 +1,7 @@
 import streamlit as st
 import tiktoken
 from dotenv import load_dotenv
+from doc_loader import get_text
 
 load_dotenv(
     dotenv_path="./env/.env",  # .env 경로를 절대 경로 또는 상대경로로 입력합니다.
@@ -17,6 +18,18 @@ def main():
         uploaded_files = st.file_uploader("Upload your file", type=['pdf', 'docx'], accept_multiple_files=True)
         process = st.button("업로드")
         search_knowledge_base = st.checkbox("지식 데이터베이스에서 검색")
+
+    if process:
+        files_text = get_text(uploaded_files)
+        chunks = get_text_chunks(files_text)
+
+        docs = [d.page_content for d in chunks]
+        embed_store.insert_document(docs)
+
+        st.success("업로드가 완료되었습니다.", icon="✅")
+
+
+    #  채팅 부분
     if "conversation" not in st.session_state:
         st.session_state.conversation = []
 
@@ -61,5 +74,24 @@ def tiktoken_len(text):
     tokenizer = tiktoken.get_encoding("cl100k_base")
     tokens = tokenizer.encode(text)
     return len(tokens)
+
+
+# RecursiveCharacterTextSplitter 를 이용해 chunk 리턴해보세요.
+def get_text_chunks(text) -> list[Document]:
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=300,
+        chunk_overlap=30,
+        length_function=tiktoken_len
+    )
+    chunks = text_splitter.split_documents(text)
+    return chunks
+
+
+# 쿼리된 참고문서와 질문으로 프롬프트를 만들어 보세요.
+def get_prompt_refer_doc(docs: dict, query: str):
+    refer_doc = [item["documents"] for item in docs]
+    return f"아래 참고문서를 참조해서 질문에 답변을 하세요.\n[참고문서] {refer_doc}\n[질문]{query}"
+
+
 if __name__ == '__main__':
     main()
