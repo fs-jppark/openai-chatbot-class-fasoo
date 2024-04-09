@@ -12,6 +12,10 @@ def main():
     st.set_page_config(page_title="", page_icon=":robot_face:")  # 타이틀 정보 입력
     st.title("_My :red[Chatbot Demo]_")  # 챗봇 제목
 
+    with st.sidebar:
+        uploaded_files = st.file_uploader("Upload your file", type=['pdf', 'docx'], accept_multiple_files=True)
+        process = st.button("업로드")
+        search_knowledge_base = st.checkbox("지식 데이터베이스에서 검색")
     if "conversation" not in st.session_state:
         st.session_state.conversation = []
 
