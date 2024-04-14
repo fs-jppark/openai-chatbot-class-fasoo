@@ -2,7 +2,7 @@ import streamlit as st
 import tiktoken
 from dotenv import load_dotenv
 from langchain_core.documents import Document
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from doc_loader import get_text
 
@@ -29,8 +29,9 @@ def main():
         files_text = get_text(uploaded_files)
         chunks = get_text_chunks(files_text)
 
-        docs = [d.page_content for d in chunks]
-        embed_store.insert_document(docs)
+        # 아래 코드 미사용으로 주석
+        # docs = [d.page_content for d in chunks]
+        embed_store.insert_document(chunks)
 
         st.success("업로드가 완료되었습니다.", icon="✅")
 
@@ -87,12 +88,37 @@ def tiktoken_len(text):
 
 
 # RecursiveCharacterTextSplitter 를 이용해 chunk 리턴해보세요.
-def get_text_chunks(text) -> list[Document]:
-    pass
+def get_text_chunks(texts) -> list[Document]:
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size = 300,
+        chunk_overlap = 10,
+        length_function = len,
+        is_separator_regex = False
+    )
+
+    page_contents = [text.page_content for text in texts]
+    documents = [splitter.split_text(page_content) for page_content in page_contents]
+    return documents
+
 
 # 쿼리된 참고문서와 질문으로 프롬프트를 만들어 보세요.
 def get_prompt_refer_doc(docs: dict, query: str):
-    pass
+    contents = docs["documents"]
+
+
+    # 프롬프트 초기화
+    prompt = "아래의 [질문]과 [문서]의 내용을 바탕으로 질문에 알맞은 결과를 만들어주세요."
+
+    prompt += "[질문]: " + query + "\n\n"
+    prompt += "[문서] ---"
+
+    # 문서 정보를 프롬프트에 추가
+    for idx,content in enumerate(contents[0]):
+        prompt += f"{content}, "
+    prompt += "---"
+
+    return prompt
+    
 
 if __name__ == '__main__':
     main()
