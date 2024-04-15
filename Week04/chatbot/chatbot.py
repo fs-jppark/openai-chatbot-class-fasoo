@@ -88,11 +88,44 @@ def tiktoken_len(text):
 
 # RecursiveCharacterTextSplitter 를 이용해 chunk 리턴해보세요.
 def get_text_chunks(text) -> list[Document]:
-    pass
+    
+    # documents 갯수 출력
+    print(f"You hav {len(text)} documents")
+
+    print(f"metadata > {text[0].metadata}")
+
+    text_splitter = RecursiveCharacterTextSplitter(
+         chunk_size=120,
+         chunk_overlap=5,
+         length_function=len,
+         is_separator_regex=False,
+    )
+
+    #page_contents = [document.page_content for document in text]    # Document[0] ~ Document[1]
+    #page_chunks = [text_splitter.split_text(page_content) for page_content in page_contents]
+    #documents = [Document(page_content=chunk) for chunk in page_chunks]
+
+    chunks = text_splitter.split_text(text[0].page_content)
+    documents = [Document(page_content=chunk) for chunk in chunks]
+    print(f"You hav {len(documents)} documents")
+    return documents
+
+    #for t in documents:
+    #    print(f"{t} : {len(t)}")
+
+    return documents
 
 # 쿼리된 참고문서와 질문으로 프롬프트를 만들어 보세요.
 def get_prompt_refer_doc(docs: dict, query: str):
-    pass
+    print(f"get_prompt_refer_doc {docs}")
+
+    refer_doc = docs["documents"]
+
+    prompt = "아래 참고해서 질문!\n"
+    prompt += f"\n\n[참고]\n {refer_doc}"
+    prompt += f"\n\n[질문]\n {query}"
+    
+    return prompt
 
 if __name__ == '__main__':
     main()
