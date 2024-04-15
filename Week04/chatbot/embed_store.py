@@ -14,10 +14,35 @@ class EmbeddingStore:
 
     def __init__(self, api_key=OPEN_AI_KEY, embedding_model=EMBEDDING_MODEL):
         super().__init__()
+        self._openai_ef = embedding_functions.OpenAIEmbeddingFunction(
+            api_key=api_key,
+            model_name=embedding_model
+        )
+        self._collection = self._chroma_client.get_or_create_collection(name=COLLECTION_NAME,
+                                                                        embedding_function=self._openai_ef)
 
     def embedding(self, doc):
-        pass
+        return self._openai_ef(doc)[0]
+
     def query_embedding(self, text, n_results=10):
-        pass
+        embedding = self.embedding(text)
+        result = self._collection.query(query_embeddings=embedding,
+                                        n_results=n_results,
+                                        include=['documents', 'distances', 'embeddings'])
+
+        queried_result = []
+        item_count = len(result["ids"][0])
+        for i in range(item_count):
+            queried_result.append({
+                "id": result["ids"][0][i],
+                "distances": result["distances"][0][i] if result["distances"] is not None else None,
+                "embeddings": result["embeddings"][0][i] if result["embeddings"] is not None else None,
+                "documents": result["documents"][0][i] if result["documents"] is not None else None
+            })
+
+        return queried_result
+
     def insert_document(self, docs):
-        pass
+        ids = [f"id-{idx}" for idx in range(len(docs))]
+        self._collection.add(documents=docs, ids=ids)
+

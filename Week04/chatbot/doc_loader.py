@@ -1,7 +1,7 @@
 from loguru import logger
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_community.document_loaders import Docx2txtLoader
-from langchain_community.document_loaders import UnstructuredPowerPointLoader
+from langchain_community.document_loaders.pdf import PyPDFLoader
+from langchain_community.document_loaders.word_document import Docx2txtLoader
+from langchain_community.document_loaders.powerpoint import UnstructuredPowerPointLoader
 
 
 def get_text(docs):
