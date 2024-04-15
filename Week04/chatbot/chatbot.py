@@ -88,11 +88,28 @@ def tiktoken_len(text):
 
 # RecursiveCharacterTextSplitter 를 이용해 chunk 리턴해보세요.
 def get_text_chunks(text) -> list[Document]:
-    pass
+    text_splitter = RecursiveCharacterTextSplitter(
+        # Set a really small chunk size, just to show.
+        chunk_size=100,
+        chunk_overlap=20,
+        length_function=len,
+        is_separator_regex=False,
+    )
+    return text_splitter.create_documents([text])
 
 # 쿼리된 참고문서와 질문으로 프롬프트를 만들어 보세요.
 def get_prompt_refer_doc(docs: dict, query: str):
-    pass
+    prompt = "Here's what I found in the documents related to your question:\n"
+    
+    # Iterate over the returned documents and add them to the prompt
+    for doc_id, similarity in docs.items():
+        # Add the document text and the similarity score to the prompt
+        prompt += f"Document {doc_id} (Similarity Score: {similarity}):\n{docs[doc_id]}\n\n"
+    
+    # After adding all the documents, add the user's query
+    prompt += f"Based on these documents, how would you answer the following question:\n{query}?"
+    
+    return prompt
 
 if __name__ == '__main__':
     main()
