@@ -16,12 +16,12 @@ from open_ai_chat import chat
 
 def main():
     st.set_page_config(page_title="", page_icon=":robot_face:")  # 타이틀 정보 입력
-    st.title("_My :red[Chatbot Demo]_")  # 챗봇 제목
+    st.title("_My :green[Chatbot Demo]_")  # 챗봇 제목
 
     embed_store = EmbeddingStore()
 
     with st.sidebar:
-        uploaded_files = st.file_uploader("Upload your file", type=['pdf', 'docx'], accept_multiple_files=True)
+        uploaded_files = st.file_uploader("Upload your file", type=['pdf', 'docx', 'pptx'], accept_multiple_files=True)
         process = st.button("업로드")
         search_knowledge_base = st.checkbox("지식 데이터베이스에서 검색")
 
@@ -29,8 +29,11 @@ def main():
         files_text = get_text(uploaded_files)
         chunks = get_text_chunks(files_text)
 
-        docs = [d.page_content for d in chunks]
+        docs = [doc.page_content for doc in chunks]
+        # print(docs)
         embed_store.insert_document(docs)
+        # print(chunks)
+        # embed_store.insert_document(chunks)
 
         st.success("업로드가 완료되었습니다.", icon="✅")
 
@@ -41,7 +44,7 @@ def main():
 
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = [
-            {"role": "assistant", "content": "당신은 jppark 의 챗봇입니다. 사람들에게 기쁨을 주는 챗봇입니다. 항상 밝고, 명랑한 어조로 대답합니다."}]
+            {"role": "assistant", "content": "당신은 mhkang 의 챗봇입니다. 사람들에게 기쁨을 주는 챗봇입니다. 항상 밝고, 명랑한 어조로 대답합니다."}]
 
     if "messages" not in st.session_state:
         st.session_state["messages"] = [{"role": "assistant",
@@ -80,19 +83,25 @@ def create_messages(old_messages, message):
     return new_messages
 
 
-def tiktoken_len(text):
-    tokenizer = tiktoken.get_encoding("cl100k_base")
-    tokens = tokenizer.encode(text)
-    return len(tokens)
-
-
 # RecursiveCharacterTextSplitter 를 이용해 chunk 리턴해보세요.
 def get_text_chunks(text) -> list[Document]:
-    pass
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=300,
+        chunk_overlap=30,
+        length_function=len,
+        is_separator_regex=False
+    )
+
+    chunks = text_splitter.split_documents(text)
+    return chunks
 
 # 쿼리된 참고문서와 질문으로 프롬프트를 만들어 보세요.
 def get_prompt_refer_doc(docs: dict, query: str):
-    pass
+    refer_doc = docs["documents"]
+    prompt = "아래 참고문서를 참조해서 질문에 답변을 하세요."
+    prompt += f"\n\n[참고문서] \n{refer_doc}"
+    prompt += f"\n\n[질문] \n {query}"
+    return prompt
 
 if __name__ == '__main__':
     main()
