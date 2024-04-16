@@ -14,6 +14,15 @@ def chat(
         messages,
         temperature=1,
         top_p=1,
-        model="gpt-3.5-turbo-1106",
+        model="gpt-4-vision-preview",
 ):
-    pass
+
+    completions_response = client.chat.completions.create (
+        messages=messages,
+        model=model,
+        temperature=temperature,
+        top_p=top_p
+    )
+    logging.info(f"completions_response: {completions_response}")
+
+    return completions_response.choices.pop().message.content
