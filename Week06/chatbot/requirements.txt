@@ -1,6 +1,6 @@
 streamlit~=1.32.2
 python-dotenv~=1.0.1
-openai~=1.14.0
+openai~=1.23.2
 chromadb~=0.4.24
 loguru~=0.7.2
 langchain~=0.1.14

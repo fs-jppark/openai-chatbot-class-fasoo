@@ -1,10 +1,14 @@
+import base64
+
 import streamlit as st
 import tiktoken
 from dotenv import load_dotenv
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from loguru import logger
 
 from doc_loader import get_text
+from img_loader import get_images
 
 load_dotenv(
     dotenv_path="./env/.env",  # .env 경로를 절대 경로 또는 상대경로로 입력합니다.
@@ -19,21 +23,35 @@ def main():
     st.title("_My :red[Chatbot Demo]_")  # 챗봇 제목
 
     embed_store = EmbeddingStore()
+    place_holder = "질문을 입력해주세요."
 
     with st.sidebar:
-        uploaded_files = st.file_uploader("Upload your file", type=['pdf', 'docx'], accept_multiple_files=True)
+        uploaded_files = st.file_uploader("Upload your file", type=['pdf', 'docx', 'png'], accept_multiple_files=True)
         process = st.button("업로드")
         search_knowledge_base = st.checkbox("지식 데이터베이스에서 검색")
+        st.divider()
+        uploaded_image_files = st.file_uploader("Upload your image file", type=['jpg', 'png'], accept_multiple_files=True)
+        img_process = st.button("이미지 업로드")
 
+    # 파일 업로드 버튼 처리
     if process:
         files_text = get_text(uploaded_files)
         chunks = get_text_chunks(files_text)
 
-        docs = [d.page_content for d in chunks]
-        embed_store.insert_document(docs)
+        if len(chunks) > 0:
+            docs = [d.page_content for d in chunks]
+            embed_store.insert_document(docs)
+            st.success("업로드가 완료되었습니다.", icon="✅")
+        else:
+            st.success("추출된 텍스트가 없습니다.", icon="✅")
 
-        st.success("업로드가 완료되었습니다.", icon="✅")
-
+    # 이미지 업로드 버튼 처리
+    if img_process:
+        upload_images = get_images(uploaded_image_files)
+        if len(upload_images) > 0:
+            for fi in upload_images:
+                with st.sidebar:
+                    st_images = st.image(fi, width=100)
 
     #  채팅 부분
     if "conversation" not in st.session_state:
@@ -52,21 +70,39 @@ def main():
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    if query := st.chat_input("질문을 입력해주세요."):
+    if query := st.chat_input(place_holder):
         st.session_state.messages.append({"role": "user", "content": query})
 
         with st.chat_message("user"):
             st.markdown(query)
 
         with st.chat_message("assistant"):
+            logger.info(f"file_imagessd uploaded_image_files: {len(uploaded_image_files)}")
             with st.spinner("Thinking..."):
-                if search_knowledge_base is True:
+                if len(uploaded_image_files) > 0:
+                    for uf in uploaded_image_files:
+                        image_contents = []
+                        with open(uf.name, 'rb') as f:
+                            base64_string = base64.b64encode(f.read()).decode("utf-8")
+                            image_contents.append({
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{base64_string}",
+                                    "detail": "low"
+                                }
+                            })
+                    text_contents = [{"type": "text", "text": query}]
+                    new_message = {"role": "user", "content": text_contents + image_contents}
+                    logger.info(f"new_message: {new_message}")
+                    response = chat(messages=[new_message], model="gpt-4-turbo")
+                elif search_knowledge_base is True:
                     query_docs = embed_store.query_embedding(text=query)
-                    response = chat(messages=create_messages(st.session_state.chat_history, get_prompt_refer_doc(query_docs, query)))
+                    response = chat(messages=create_messages(st.session_state.chat_history,
+                                                             get_prompt_refer_doc(query_docs, query)))
                 else:
+                    logger.info("else!!")
                     response = chat(messages=create_messages(st.session_state.chat_history, query))
                 st.markdown(response)
-
         st.session_state.messages.append({"role": "assistant", "content": response})
         st.session_state.chat_history.append({"role": "user", "content": query})
         st.session_state.chat_history.append({"role": "assistant", "content": response})
