@@ -78,6 +78,7 @@ def main():
 
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
+                # 이미지 설명 부분
                 if len(uploaded_image_files) > 0:
                     for uf in uploaded_image_files:
                         image_contents = []
@@ -94,10 +95,12 @@ def main():
                     new_message = {"role": "user", "content": text_contents + image_contents}
                     logger.info(f"new_message: {new_message}")
                     response = chat(messages=[new_message], model="gpt-4-turbo")
+                # 벡터서치
                 elif search_knowledge_base is True:
                     query_docs = embed_store.query_embedding(text=query)
                     response = chat(messages=create_messages(st.session_state.chat_history,
                                                              get_prompt_refer_doc(query_docs, query)))
+                # 일반적인 질문이 이미지를 생성하려는 의도가 있는 지 확인 후 이미지 생성 로직이면 Dall-E 호출
                 else:
                     logger.info("else!!")
                     response = chat(messages=[{"role": "user", "content": f"아래 질의는 이미지 생성 요청입니까? 예, 아니오로 대답하세요.\n {query}"}], model="gpt-4-turbo")
