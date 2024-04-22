@@ -22,3 +22,22 @@ def chat(
     logging.info(f"completions_response: {completions_response}")
 
     return completions_response.choices.pop().message.content
+
+
+def generate_image(
+        prompt,
+        model="dall-e-3",
+        size="1024x1024",
+        quality="standard",
+        n=1,
+):
+    response = client.images.generate(
+        model=model,
+        prompt=prompt,
+        size=size,
+        quality=quality,
+        n=n
+    )
+    image_url = response.data[0].url
+    return image_url
+

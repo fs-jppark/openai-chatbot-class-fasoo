@@ -15,7 +15,7 @@ load_dotenv(
     verbose=True)
 
 from embed_store import EmbeddingStore
-from open_ai_chat import chat
+from open_ai_chat import chat, generate_image
 
 
 def main():
@@ -100,7 +100,14 @@ def main():
                                                              get_prompt_refer_doc(query_docs, query)))
                 else:
                     logger.info("else!!")
-                    response = chat(messages=create_messages(st.session_state.chat_history, query))
+                    response = chat(messages=[{"role": "user", "content": f"아래 질의는 이미지 생성 요청입니까? 예, 아니오로 대답하세요.\n {query}"}], model="gpt-4-turbo")
+                    logger.info(f"response 1st: {response}")
+                    if "예" in response:
+                        image_url = generate_image(prompt=query)
+                        response = f"![{query}]({image_url})"
+                    else:
+                        response = chat(messages=create_messages(st.session_state.chat_history, query))
+
                 st.markdown(response)
         st.session_state.messages.append({"role": "assistant", "content": response})
         st.session_state.chat_history.append({"role": "user", "content": query})
