@@ -1,6 +1,7 @@
 import logging
 import os
 
+import whisper
 from openai import OpenAI
 
 client = OpenAI(api_key=os.getenv("OPEN_AI_API_KEY"))
@@ -41,3 +42,7 @@ def generate_image(
     image_url = response.data[0].url
     return image_url
 
+
+def generate_text_from_audio(model, audio_file):
+    result = model.transcribe(audio_file)
+    return result["text"]

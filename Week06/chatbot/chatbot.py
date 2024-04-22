@@ -2,10 +2,12 @@ import base64
 
 import streamlit as st
 import tiktoken
+import whisper
 from dotenv import load_dotenv
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from loguru import logger
+from st_audiorec import st_audiorec
 
 from doc_loader import get_text
 from img_loader import get_images
@@ -15,8 +17,9 @@ load_dotenv(
     verbose=True)
 
 from embed_store import EmbeddingStore
-from open_ai_chat import chat, generate_image
+from open_ai_chat import chat, generate_image, generate_text_from_audio
 
+model = whisper.load_model("base")
 
 def main():
     st.set_page_config(page_title="", page_icon=":robot_face:")  # 타이틀 정보 입력
@@ -24,11 +27,17 @@ def main():
 
     embed_store = EmbeddingStore()
     place_holder = "질문을 입력해주세요."
+    wav_audio_data = None
 
     with st.sidebar:
         uploaded_files = st.file_uploader("Upload your file", type=['pdf', 'docx', 'png'], accept_multiple_files=True)
         process = st.button("업로드")
         search_knowledge_base = st.checkbox("지식 데이터베이스에서 검색")
+        st.divider()
+
+        wav_audio_data = st_audiorec()
+        audio_process = st.button("오디오로 챗하기")
+
         st.divider()
         uploaded_image_files = st.file_uploader("Upload your image file", type=['jpg', 'png'], accept_multiple_files=True)
         img_process = st.button("이미지 업로드")
@@ -53,6 +62,14 @@ def main():
                 with st.sidebar:
                     st_images = st.image(fi, width=100)
 
+    if audio_process:
+        with open("voice.wav", "wb") as v:
+            v.write(wav_audio_data)
+
+        text = generate_text_from_audio(audio_file="voice.wav", model=model)
+        logger.info(f"voice text:{text}")
+        process_query(embed_store, text, search_knowledge_base, uploaded_image_files)
+
     #  채팅 부분
     if "conversation" not in st.session_state:
         st.session_state.conversation = []
@@ -71,50 +88,54 @@ def main():
             st.markdown(message["content"])
 
     if query := st.chat_input(place_holder):
-        st.session_state.messages.append({"role": "user", "content": query})
+        process_query(embed_store, query, search_knowledge_base, uploaded_image_files)
 
-        with st.chat_message("user"):
-            st.markdown(query)
 
-        with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
-                # 이미지 설명 부분
-                if len(uploaded_image_files) > 0:
-                    for uf in uploaded_image_files:
-                        image_contents = []
-                        with open(uf.name, 'rb') as f:
-                            base64_string = base64.b64encode(f.read()).decode("utf-8")
-                            image_contents.append({
-                                "type": "image_url",
-                                "image_url": {
-                                    "url": f"data:image/jpeg;base64,{base64_string}",
-                                    "detail": "low"
-                                }
-                            })
-                    text_contents = [{"type": "text", "text": query}]
-                    new_message = {"role": "user", "content": text_contents + image_contents}
-                    logger.info(f"new_message: {new_message}")
-                    response = chat(messages=[new_message], model="gpt-4-turbo")
-                # 벡터서치
-                elif search_knowledge_base is True:
-                    query_docs = embed_store.query_embedding(text=query)
-                    response = chat(messages=create_messages(st.session_state.chat_history,
-                                                             get_prompt_refer_doc(query_docs, query)))
-                # 일반적인 질문이 이미지를 생성하려는 의도가 있는 지 확인 후 이미지 생성 로직이면 Dall-E 호출
+def process_query(embed_store, query, search_knowledge_base, uploaded_image_files):
+    st.session_state.messages.append({"role": "user", "content": query})
+    with st.chat_message("user"):
+        st.markdown(query)
+    with st.chat_message("assistant"):
+        with st.spinner("Thinking..."):
+            # 이미지 설명 부분
+            if len(uploaded_image_files) > 0:
+                for uf in uploaded_image_files:
+                    image_contents = []
+                    with open(uf.name, 'rb') as f:
+                        base64_string = base64.b64encode(f.read()).decode("utf-8")
+                        image_contents.append({
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64_string}",
+                                "detail": "low"
+                            }
+                        })
+                text_contents = [{"type": "text", "text": query}]
+                new_message = {"role": "user", "content": text_contents + image_contents}
+                logger.info(f"new_message: {new_message}")
+                response = chat(messages=[new_message], model="gpt-4-turbo")
+            # 벡터서치
+            elif search_knowledge_base is True:
+                query_docs = embed_store.query_embedding(text=query)
+                response = chat(messages=create_messages(st.session_state.chat_history,
+                                                         get_prompt_refer_doc(query_docs, query)))
+            # 일반적인 질문이 이미지를 생성하려는 의도가 있는 지 확인 후 이미지 생성 로직이면 Dall-E 호출
+            else:
+                logger.info("else!!")
+                response = chat(
+                    messages=[{"role": "user", "content": f"아래 질의는 이미지 생성 요청입니까? 예, 아니오로 대답하세요.\n {query}"}],
+                    model="gpt-4-turbo")
+                logger.info(f"response 1st: {response}")
+                if "예" in response:
+                    image_url = generate_image(prompt=query)
+                    response = f"![{query}]({image_url})"
                 else:
-                    logger.info("else!!")
-                    response = chat(messages=[{"role": "user", "content": f"아래 질의는 이미지 생성 요청입니까? 예, 아니오로 대답하세요.\n {query}"}], model="gpt-4-turbo")
-                    logger.info(f"response 1st: {response}")
-                    if "예" in response:
-                        image_url = generate_image(prompt=query)
-                        response = f"![{query}]({image_url})"
-                    else:
-                        response = chat(messages=create_messages(st.session_state.chat_history, query))
+                    response = chat(messages=create_messages(st.session_state.chat_history, query))
 
-                st.markdown(response)
-        st.session_state.messages.append({"role": "assistant", "content": response})
-        st.session_state.chat_history.append({"role": "user", "content": query})
-        st.session_state.chat_history.append({"role": "assistant", "content": response})
+            st.markdown(response)
+    st.session_state.messages.append({"role": "assistant", "content": response})
+    st.session_state.chat_history.append({"role": "user", "content": query})
+    st.session_state.chat_history.append({"role": "assistant", "content": response})
 
 
 def create_messages(old_messages, message):
