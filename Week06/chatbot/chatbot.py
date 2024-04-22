@@ -77,7 +77,6 @@ def main():
             st.markdown(query)
 
         with st.chat_message("assistant"):
-            logger.info(f"file_imagessd uploaded_image_files: {len(uploaded_image_files)}")
             with st.spinner("Thinking..."):
                 if len(uploaded_image_files) > 0:
                     for uf in uploaded_image_files:
