@@ -3,6 +3,7 @@ import tiktoken
 from dotenv import load_dotenv
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+import logging
 
 from doc_loader import get_text
 
@@ -28,6 +29,7 @@ def main():
     if process:
         files_text = get_text(uploaded_files)
         chunks = get_text_chunks(files_text)
+        print(f"chunks: {chunks}")
 
         docs = [d.page_content for d in chunks]
         embed_store.insert_document(docs)
@@ -41,7 +43,7 @@ def main():
 
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = [
-            {"role": "assistant", "content": "당신은 jppark 의 챗봇입니다. 사람들에게 기쁨을 주는 챗봇입니다. 항상 밝고, 명랑한 어조로 대답합니다."}]
+            {"role": "assistant", "content": "당신은 sangwon.jo 의 챗봇입니다. 사람들에게 기쁨을 주는 챗봇입니다. 항상 밝고, 명랑한 어조로 대답합니다."}]
 
     if "messages" not in st.session_state:
         st.session_state["messages"] = [{"role": "assistant",
@@ -59,7 +61,7 @@ def main():
             st.markdown(query)
 
         with st.chat_message("assistant"):
-            with st.spinner("Thinking..."):
+            with st.spinner("생각 중..."):
                 if search_knowledge_base is True:
                     query_docs = embed_store.query_embedding(text=query)
                     response = chat(messages=create_messages(st.session_state.chat_history, get_prompt_refer_doc(query_docs, query)))
@@ -86,9 +88,22 @@ def tiktoken_len(text):
     return len(tokens)
 
 
-# RecursiveCharacterTextSplitter 를 이용해 chunk 리턴해보세요.
-def get_text_chunks(text) -> list[Document]:
-    pass
+# RecursiveCharacterTextSplitter 를 이용해 chunk 리턴해보세요. 5107 3759 7697 0795
+def get_text_chunks(docs) -> list[Document]:
+    chunks = []
+    for doc in docs:
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size = 100,
+            chunk_overlap = 10,
+            length_function = len,
+            is_separator_regex = False,
+        )
+        texts = splitter.split_text(doc.page_content)
+        for text in texts:
+            new_doc = doc.copy()
+            new_doc.page_content = text
+            chunks.append(new_doc)
+    return chunks
 
 # 쿼리된 참고문서와 질문으로 프롬프트를 만들어 보세요.
 def get_prompt_refer_doc(docs: dict, query: str):

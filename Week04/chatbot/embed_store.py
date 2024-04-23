@@ -14,10 +14,18 @@ class EmbeddingStore:
 
     def __init__(self, api_key=OPEN_AI_KEY, embedding_model=EMBEDDING_MODEL):
         super().__init__()
+        self._embedding_function = embedding_functions.OpenAIEmbeddingFunction(api_key=api_key, model_name=embedding_model)
 
     def embedding(self, doc):
         pass
+    
     def query_embedding(self, text, n_results=10):
-        pass
+        query_embed = self._embedding_function(text)
+        
+        return query_embed
+
     def insert_document(self, docs):
-        pass
+        self._chroma_client.delete_collection(COLLECTION_NAME)
+        self._chroma_client.get_or_create_collection(name=COLLECTION_NAME, embedding_function=self._embedding_function)
+        for idx, doc in enumerate(docs):
+            self._collection.add(documents=doc, ids=f"id-{idx}")
